@@ -1,10 +1,27 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*- 
 """
-Created on Wed Aug  8 11:01:34 2018
+Created on Fri Nov 2 11:01:34 2018
 
 """
-# This program will seperate a 2Ch .wav file into seperate audio files.
+
+# /----------------------------[General Info]---------------------------------\
+#
+# This program will seperate a folder of stereo .wav files into seperate audio 
+# files.
+#
+# Once the script has been executed, a window will appear allowing the user to 
+# select the directory of the audio files they wish to process. This folder can 
+# also contain mono and multi-channel audio with more than two channels, however
+# such files will be ignored. The output .wav files will appear in the "OUTPUT"
+# folder of the selected directory along with a log file indicating the files
+# which have been processed, and those which have been ignored, if any.
+#
+# I'll be adding more small and possibly useful audio related python and matlab 
+# scripts to this corner of GitHub in the not to distant future... 
+# 
+# In the meantime, if you're interested in elecronic music, my music may 
+# interest you: https://psilatron.bandcamp.com/
 
 import numpy as np
 import soundfile as sf
