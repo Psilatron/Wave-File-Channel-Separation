@@ -4,16 +4,14 @@
 Created on Wed Aug  8 11:01:34 2018
 
 """
-# This program will seperate a 2Ch Audio file into seperate audio files.
+# This program will seperate a 2Ch .wav file into seperate audio files.
 
 import numpy as np
 import soundfile as sf
 import time
 import os
 
-OUTPUT=[]
-Sz=0
-
+#--------------------------------
 
 def SelectDir(): #Directory selection GUI function.
     '''function to enable selection of directory by user input'''
@@ -33,16 +31,16 @@ def SelectDir(): #Directory selection GUI function.
  
 def ChSeperate(): #Channel seperation function.
        
-    ChLeft=Audio2Ch[:,0]
-    ChRight=Audio2Ch[:,1]
+    [ChLeft,ChRight]=Audio2Ch[:,0],Audio2Ch[:,1];
 
     return ChLeft,ChRight
+
+#--------------------------------
 
 current_directory = str(SelectDir()) 
 os.chdir(current_directory) #change directory to user selected directory
 current_directory = os.getcwd()
 
-#current_directory = os.getcwd() #original current directory
 file_list = []
 
 start_time = time.time()
@@ -62,25 +60,47 @@ ListSz=float(np.size(file_list)) #Shows number of filenames contained in 'file_l
 if not os.path.exists("OUTPUT"): #Checks for 'OUTPUT' directory. Will make one if none there.
     os.makedirs("OUTPUT")
 
-for x in range(0,np.size(file_list)): #Step through file names
+f= open("OUTPUT\Log.2chSeperation.txt","w+") #this will create a new text file, and open it.
+f.write("=======[Proccessing Info]=======\n"+"\n")
+
+f_counter=0;
+
+for x in range(0,np.size(file_list)): #Step through file names. Read Stereo .wav files using soundfile read() function.
     
     [Audio2Ch,fs]=sf.read(file_list[x])
-
-    [Left,Right]=ChSeperate()
-       
-    sf.write('OUTPUT\ '+str(x+1).zfill(3)+'.Lch_'+file_list[x],Left,fs)
-    sf.write('OUTPUT\ '+str(x+1).zfill(3)+'.Rch_'+file_list[x],Right,fs)      
     
+    ChCount=np.ndim(Audio2Ch)
+    
+    if ChCount == 2:
+        f_counter=f_counter+1;
+
+        [Left,Right]=ChSeperate()   
+        
+        sf.write('OUTPUT\ '+str(f_counter).zfill(3)+'.Lch_'+file_list[x],Left,fs)
+        sf.write('OUTPUT\ '+str(f_counter).zfill(3)+'.Rch_'+file_list[x],Right,fs) 
+        f.write("File OK: "+file_list[x]+"\n"+"\n")
+        
+    else:
+        print("Warning: File "+ file_list[x]+" is not Stereo\n")
+        f.write("Warning: File "+ file_list[x]+" is not Stereo\n"+"\n")
+
+out_file_count=f_counter*2
+
 elapsed_time = time.time() - start_time
 elapsed_time = round(elapsed_time, 2) 
 
-f= open("OUTPUT\Log.2chSeperation.txt","w+") #this will create a new text file, and open it.
-f.write("====[Proccessing Info]====\n")
-f.write("Processing Time: " + str(elapsed_time) + " Sec.\n")
-f.write(str((x+1)*2)+" Files Created.")
+file_str="File"
+
+if f_counter>1:
+    file_str="Files"
+    
+f.write("------------[Summary]----------\n"+"\n")
+f.write("Processing Time: " + str(elapsed_time) + " Sec."+"["+str((elapsed_time)/60)+" Mins"+"]\n")
+f.write(str(out_file_count/2)+" "+file_str+" Processed, ")
+f.write(str(out_file_count)+" Files Created.")
 f.close()
 
-print('====[Summary]====\n')
-print('Total Processing Time: ' + str(elapsed_time) + ' Sec.' +'['+str((elapsed_time)/60)+' Mins'+']') 
-print(str(x+1)+" Files Created in directory OUTPUT")
-print('See Log.2chSeperation.txt in root directory for summary.')
+print(  '------------[Summary]----------\n')
+print('Total Processing Time: ' + str(elapsed_time) + ' Sec.' +'['+str((elapsed_time)/60)+' Mins.]') 
+print(str(out_file_count/2)+" "+file_str+" Processed, " + str(out_file_count)+" Files Created.")
+print('See Log.2chSeperation.txt in OUTPUT directory for summary.')
