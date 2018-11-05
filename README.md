@@ -1,6 +1,6 @@
 # Wave-File-Channel-Separation
 
-====[Requirements and info]====  
+----[ Requirements and info ]----  
 
 - Stereo only (for now).
 - Audio files of different sample rates ok.
