@@ -16,12 +16,6 @@ Created on Fri Nov 2 11:01:34 2018
 # such files will be ignored. The output .wav files will appear in the "OUTPUT"
 # folder of the selected directory along with a log file indicating the files
 # which have been processed, and those which have been ignored, if any.
-#
-# I'll be adding more small and possibly useful audio related python and matlab 
-# scripts to this corner of GitHub in the not to distant future... 
-# 
-# In the meantime, if you're interested in elecronic music, my music may 
-# interest you: https://psilatron.bandcamp.com/
 
 import numpy as np
 import soundfile as sf
