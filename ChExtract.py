@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*- 
 """
 Created on Fri Nov 2 11:01:34 2018
-
 """
 
 # /----------------------------[General Info]---------------------------------\
@@ -21,17 +20,19 @@ import numpy as np
 import soundfile as sf
 import time
 import os
+import Tkinter, tkFileDialog, sys
 
 #--------------------------------
 
 def SelectDir(): #Directory selection GUI function.
     '''function to enable selection of directory by user input'''
-    import Tkinter, tkFileDialog, sys
+    
     root = Tkinter.Tk()
     root.wm_attributes("-topmost", 1)##Will display window on top of others
     root.withdraw()
     initialPath = os.getcwd()
     dirname = tkFileDialog.askdirectory(parent=root, initialdir=initialPath, title='Pick a directory')
+    root.update() #added this line to correct dialogue box issue on MacOS.
 #    dirname = tkFileDialog.askdirectory(title="Select A Folder", mustexist=1)
 #    print("dirname: ", dirname)
     if dirname is '':
@@ -42,7 +43,7 @@ def SelectDir(): #Directory selection GUI function.
  
 def ChSeperate(): #Channel seperation function.
        
-    [ChLeft,ChRight]=Audio2Ch[:,0],Audio2Ch[:,1];
+    [ChLeft,ChRight]=Audio2Ch[:,0],Audio2Ch[:,1]
 
     return ChLeft,ChRight
 
@@ -70,11 +71,13 @@ ListSz=float(np.size(file_list)) #Shows number of filenames contained in 'file_l
 
 if not os.path.exists("OUTPUT"): #Checks for 'OUTPUT' directory. Will make one if none there.
     os.makedirs("OUTPUT")
+    
+logfile=os.path.join('OUTPUT','Log.2chSeperation.txt')
 
-f= open("OUTPUT\Log.2chSeperation.txt","w+") #this will create a new text file, and open it.
+f= open(logfile,"w+") #this will create a new text file, and open it.
 f.write("=======[Proccessing Info]=======\n"+"\n")
 
-f_counter=0;
+f_counter=0
 
 for x in range(0,np.size(file_list)): #Step through file names. Read Stereo .wav files using soundfile read() function.
     
@@ -83,12 +86,16 @@ for x in range(0,np.size(file_list)): #Step through file names. Read Stereo .wav
     ChCount=np.ndim(Audio2Ch)
     
     if ChCount == 2:
-        f_counter=f_counter+1;
+        f_counter=f_counter+1
 
         [Left,Right]=ChSeperate()   
         
-        sf.write('OUTPUT\ '+str(f_counter).zfill(3)+'.Lch_'+file_list[x],Left,fs)
-        sf.write('OUTPUT\ '+str(f_counter).zfill(3)+'.Rch_'+file_list[x],Right,fs) 
+        filenameL=os.path.join('OUTPUT', str(f_counter).zfill(3)+'.Lch_'+file_list[x]) 
+        filenameR=os.path.join('OUTPUT',str(f_counter).zfill(3)+'.Rch_'+file_list[x])
+                
+        sf.write(filenameL,Left,fs)
+        sf.write(filenameR,Right,fs) 
+                
         f.write("File OK: "+file_list[x]+"\n"+"\n")
         
     else:
